@@ -39,7 +39,7 @@ jobs:
         id: time
         run: echo "TAG=$(date +'%y%m%d%H%M%S')" >> $GITHUB_ENV
       - name: echo the docker image name
-        run: echo 'docker image --> ${{ env.DOCKER_IMAGE_NAME }}'
+        run: echo 'docker image --> ${{ env.DOCKER_IMAGE_NAME }}/${{ env.TAG }}'
       - name: build docker image
         run: |
           echo 'building docker image ....'
