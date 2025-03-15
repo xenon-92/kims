@@ -1,0 +1,33 @@
+name: GHCR BUILD AND PUSH
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'main'
+env:
+  GHCR_IMAGE_NAME: 'kims'
+  GHCR_USERNAME: xenon-92
+  GHCR_PAT: ${{ secrets.GHCR_PAT }}
+  GHCR_REGISTRY: 'ghcr.io'
+jobs:
+  GHCR_build_and_push:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+      - name: login to GHCR
+        run: |
+          docker login --username ${{env.GHCR_USERNAME}} --password ${{secrets.GHCR_PAT}} ${{env.GHCR_REGISTRY}}
+      - name: get docker tag
+        id: time
+        run: echo "TAG=$(date +'%y%m%d%H%M%S')" >> $GITHUB_ENV
+      - name: echo the docker image name
+        run: echo 'docker image --> ${{ env.GHCR_IMAGE_NAME }}/${{ env.TAG }}'
+      - name: build GHCR image
+        run: |
+          docker build -t ${{env.GHCR_REGISTRY}}/${{env.GHCR_USERNAME}}/${{ env.GHCR_IMAGE_NAME }}:${{ env.TAG }} .
+          docker push ${{env.GHCR_REGISTRY}}/${{env.GHCR_USERNAME}}/${{ env.GHCR_IMAGE_NAME }}:${{ env.TAG }}
+      - name: push GHCR image
+        run: |
+          docker push ${{env.GHCR_REGISTRY}}/${{env.GHCR_USERNAME}}/${{ env.GHCR_IMAGE_NAME }}:${{ env.TAG }}
