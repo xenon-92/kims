@@ -1,20 +1,17 @@
-FROM golang:1.21 as builder
+# BUILD STAGE
+
+FROM golang:1.21 AS builder
 
 WORKDIR /app
-
 COPY go.mod go.sum ./
-RUN go mod download
+COPY . ./
+RUN CGO_ENABLED=0 GOOS=linux go build -o /kims
 
-COPY . .
 
-RUN go build -o myapp
-
-FROM alpine:3.18
-
-WORKDIR /app
-
-COPY --from=builder /app/myapp .
-
+# RUNTIME STAGE
+FROM alpine:latest
+WORKDIR /root/
+# Copy only the compiled binary from the builder stage
+COPY --from=builder /kims ./compiled/
 EXPOSE 8080
-
-CMD ["./myapp"]
+CMD [ "./compiled/kims" ]

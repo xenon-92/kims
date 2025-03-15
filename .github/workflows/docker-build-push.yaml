@@ -1,0 +1,50 @@
+name: DOCKER BUILD AND PUSH
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+env:
+  IMAGE_NAME: 'kims'
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DOCKER_REGISTRY: 'docker.io'
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+      - name: setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      - name: build solution
+      # This specifies the scope of the build. The ./... pattern tells the Go tool to recursively build all packages in the current directory and its subdirectories.
+        run: GO111MODULE=on go build -v ./...
+  docker_build_and_push:
+    runs-on: 'ubuntu-latest'
+    needs: build
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+      - name: login to docker hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD }}
+      - name: get docker tag
+        id: time
+        run: echo "TAG=$(date +'%y%m%d%H%M%S')" >> $GITHUB_ENV
+      - name: echo the docker image name
+        run: echo 'docker image --> ${{ env.DOCKER_IMAGE_NAME }}'
+      - name: build docker image
+        run: |
+          echo 'building docker image ....'
+          docker build -t ${{env.DOCKER_USERNAME}}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.TAG }} .
+      - name: docker push image
+        run: |
+          echo 'pushing to docker hub'
+          docker push ${{env.DOCKER_USERNAME}}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.TAG }}
