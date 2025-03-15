@@ -6,7 +6,7 @@ on:
       - main
       - 'feature/**'
 env:
-  IMAGE_NAME: 'kims'
+  DOCKER_IMAGE_NAME: 'kims'
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   DOCKER_REGISTRY: 'docker.io'
