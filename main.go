@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -18,6 +19,8 @@ func main() {
 	router.HandleFunc("/employees", getEmployeesHandler).Methods(http.MethodGet)
 
 	router.HandleFunc("/health", healthCheckHandler).Methods(http.MethodGet)
+
+	router.HandleFunc("/info", getSystemInfo).Methods(http.MethodGet)
 
 	http.ListenAndServe(":8080", router)
 
@@ -38,4 +41,19 @@ func getEmployeesHandler(w http.ResponseWriter, r *http.Request) {
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("OK"))
+}
+
+func getSystemInfo(w http.ResponseWriter, r *http.Request) {
+	remoteAddr := r.RemoteAddr
+
+	// Split host and port
+	host, _, err := net.SplitHostPort(remoteAddr)
+	if err != nil {
+		fmt.Fprintf(w, "Error parsing address: %v", err)
+		return
+	}
+
+	fmt.Fprintf(w, "Client IP: %s\n", host)
+	fmt.Fprintf(w, "Remote Address: %s\n", remoteAddr)
+
 }
