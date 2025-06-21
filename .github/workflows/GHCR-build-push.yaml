@@ -8,7 +8,7 @@ on:
 env:
   GHCR_IMAGE_NAME: 'kims'
   GHCR_USERNAME: xenon-92
-  GHCR_PAT: ${{ secrets.GHCR_PACKAGE }}
+  GHCR_PAT: ${{ secrets.GHCR_PAT }}
   GHCR_REGISTRY: 'ghcr.io'
 jobs:
   GHCR_build_and_push:
