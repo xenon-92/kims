@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -21,6 +22,8 @@ func main() {
 	router.HandleFunc("/health", healthCheckHandler).Methods(http.MethodGet)
 
 	router.HandleFunc("/info", getSystemInfo).Methods(http.MethodGet)
+	router.HandleFunc("/graceKill", killServerGracefully).Methods(http.MethodPost)
+	router.HandleFunc("/kill", killServer).Methods(http.MethodPost)
 
 	http.ListenAndServe(":8080", router)
 
@@ -56,4 +59,16 @@ func getSystemInfo(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Client IP: %s\n", host)
 	fmt.Fprintf(w, "Remote Address: %s\n", remoteAddr)
 
+}
+
+func killServerGracefully(w http.ResponseWriter, r *http.Request) {
+	log.Println("Server is gracefully shutting down...")
+	os.Exit(0)
+	log.Println("Server has been gracefully shut down.")
+}
+
+func killServer(w http.ResponseWriter, r *http.Request) {
+	log.Println("Server is shutting down...")
+	os.Exit(1)
+	log.Println("Server has been shut down.")
 }
