@@ -35,12 +35,14 @@ func main() {
 }
 
 func liveCheckHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Live Check OK")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Live Check OK"))
 }
 
 func liveCheckHandlerSlow(w http.ResponseWriter, r *http.Request) {
 	time.Sleep(5 * time.Second)
+	log.Println("Live Check slow OK")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Live Check Slow OK"))
 }
