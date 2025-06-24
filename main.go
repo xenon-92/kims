@@ -27,6 +27,7 @@ func main() {
 	router.HandleFunc("/kill", killServer).Methods(http.MethodPost)
 
 	router.HandleFunc("/livez", liveCheckHandler).Methods(http.MethodGet)
+	router.HandleFunc("/livezFail", liveCheckfail).Methods(http.MethodGet)
 	router.HandleFunc("/livezSlow", liveCheckHandlerSlow).Methods(http.MethodGet)
 
 	http.ListenAndServe(":8080", router)
@@ -38,6 +39,11 @@ func liveCheckHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Live Check OK")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Live Check OK"))
+}
+func liveCheckfail(w http.ResponseWriter, r *http.Request) {
+	log.Println("Live Check failed")
+	w.WriteHeader(http.StatusUnauthorized)
+	w.Write([]byte("Live Check failed"))
 }
 
 func liveCheckHandlerSlow(w http.ResponseWriter, r *http.Request) {
