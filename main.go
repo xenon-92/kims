@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -25,9 +26,23 @@ func main() {
 	router.HandleFunc("/graceKill", killServerGracefully).Methods(http.MethodPost)
 	router.HandleFunc("/kill", killServer).Methods(http.MethodPost)
 
+	router.HandleFunc("/livez", liveCheckHandler).Methods(http.MethodGet)
+	router.HandleFunc("/livezSlow", liveCheckHandlerSlow).Methods(http.MethodGet)
+
 	http.ListenAndServe(":8080", router)
 
 	log.Println("Server started on port 8080")
+}
+
+func liveCheckHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Live Check OK"))
+}
+
+func liveCheckHandlerSlow(w http.ResponseWriter, r *http.Request) {
+	time.Sleep(5 * time.Second)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Live Check Slow OK"))
 }
 
 func getEmployeesHandler(w http.ResponseWriter, r *http.Request) {
