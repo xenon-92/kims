@@ -14,6 +14,7 @@ import (
 
 func main() {
 	router := mux.NewRouter()
+	time.Sleep(6 * time.Second) // Simulate a delay for startup probe check
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello Worlds")
 	})
